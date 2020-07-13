@@ -125,7 +125,8 @@ export default {
       })
       return contact.marked = true ;
     },
-    removeContact(id) {
+    async removeContact(id) {
+      await this.request(`api/contacts/${id}`, 'DELETE')
       this.contacts = this.contacts.filter (c => c.id  !== id)
     },
   },
