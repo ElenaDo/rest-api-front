@@ -35,6 +35,7 @@
           >
             <v-text-field
               label="E-mail"
+              type="email"
               v-model="form.email"
               required
             ></v-text-field>
@@ -111,9 +112,11 @@ export default {
         console.warn('Error', e.message)
       }
     },
-    createContact() {
+    async createContact() {
       const {...contact} = this.form;
-      this.contacts.push({...contact, id: Date.now()})
+      const newContact = await this.request('api/contacts', 'POST', contact)
+      this.contacts.push(newContact)
+      // this.contacts.push({...contact, id: Date.now()})
       this.form.name = this.form.lastname = this.form.email = ''
     },
     markContact(id) {
