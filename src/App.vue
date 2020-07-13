@@ -82,16 +82,35 @@ export default {
       lastname: '',
       email: '',
     },
-    contacts: [
-      {name: 'Elena', lastname: 'Mus', email: 'rqspopova@gmail.ru', marked: false}
-    ],
+    contacts: [],
   }),
+  async mounted() {
+    this.contacts = await this.request('api/contacts')
+  },
   computed: {
     canCreate() {
       return this.form.name && this.form.lastname && this.form.email
     }
   },
   methods: {
+    async request(url, method = 'GET', data = null) {
+      try{
+        const headers = {}
+        let body
+        if (data) {
+          headers['Content-Type'] = 'application/json'
+          body = JSON.stringify(data)
+        }
+        const response = await fetch(`http://localhost:3000/${url}`, {
+          method,
+          headers,
+          body
+        })
+        return await response.json()
+      } catch(e) {
+        console.warn('Error', e.message)
+      }
+    },
     createContact() {
       const {...contact} = this.form;
       this.contacts.push({...contact, id: Date.now()})
