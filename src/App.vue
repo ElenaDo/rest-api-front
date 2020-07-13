@@ -43,12 +43,12 @@
             cols="12"
             md="3"
           >
-          <v-btn color="primary" @click="createContact">Create</v-btn>
+          <v-btn color="primary" @click="createContact" :disabled="!canCreate">Create</v-btn>
           </v-col>
         </v-row>
         <div v-if="this.contacts.length">
-          <v-card v-for="contact in contacts" :key="contact.id" v-cloak>
-            <v-card-title>{{contact.name}}</v-card-title>
+          <v-card class="my-2" v-for="contact in contacts" :key="contact.id" v-cloak>
+            <v-card-title :style="{color: contact.marked ? 'red' : 'black'}">{{contact.name}}</v-card-title>
             <v-list-item two-line>
               <v-list-item-content>
                 <div class="overline mb-4">{{contact.lastname}}</div>
@@ -56,8 +56,8 @@
               </v-list-item-content>
             </v-list-item>
             <v-card-actions> 
-              <v-btn text>Cancel</v-btn>
-              <v-btn text>Delete</v-btn>
+              <v-btn text @click="markContact(contact.id)" :disabled="contact.marked">Mark</v-btn>
+              <v-btn text @click="removeContact(contact.id)">Delete</v-btn>
             </v-card-actions>
           </v-card>
         </div>
@@ -82,13 +82,29 @@ export default {
       lastname: '',
       email: '',
     },
-    contacts: [],
+    contacts: [
+      {name: 'Elena', lastname: 'Mus', email: 'rqspopova@gmail.ru', marked: false}
+    ],
   }),
+  computed: {
+    canCreate() {
+      return this.form.name && this.form.lastname && this.form.email
+    }
+  },
   methods: {
     createContact() {
       const {...contact} = this.form;
       this.contacts.push({...contact, id: Date.now()})
       this.form.name = this.form.lastname = this.form.email = ''
+    },
+    markContact(id) {
+      const contact = this.contacts.find(c => {
+        return c.id === id
+      })
+      return contact.marked = true ;
+    },
+    removeContact(id) {
+      this.contacts = this.contacts.filter (c => c.id  !== id)
     },
   },
 };
