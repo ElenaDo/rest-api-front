@@ -119,11 +119,15 @@ export default {
       // this.contacts.push({...contact, id: Date.now()})
       this.form.name = this.form.lastname = this.form.email = ''
     },
-    markContact(id) {
+    async markContact(id) {
       const contact = this.contacts.find(c => {
         return c.id === id
       })
-      return contact.marked = true ;
+      const updated = await this.request(`api/contacts/${id}`, 'PUT', {
+        ...contact,
+        marked: true
+      })   
+      contact.marked = updated.marked
     },
     async removeContact(id) {
       await this.request(`api/contacts/${id}`, 'DELETE')
